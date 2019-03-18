@@ -1,0 +1,8 @@
+{
+  "author": "Dustin Martin",
+  "score": 10,
+  "name": "Basic Addition",
+  "description": "Submit the answer to a randomized addition problem at {{server}}:{{port}}.",
+  "category": "Miscellaneous",
+  "hints": ["Sample hint 1", "Sample hint 2"]
+}
