@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+  frontend:
+    build:
+      context: ./picoCTF-web
+      dockerfile: frontend.Dockerfile
+    image: picoctf-frontend
+    ports:
+      - "18002:80"
+    volumes:
+      - ./picoCTF-web/nginx:/etc/nginx/conf.d:ro
+    depends_on:
+      - api
+  api:
+    build:
+      context: ./picoCTF-web
+      dockerfile: api.Dockerfile
+    image: picoctf-api
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo

@@ -1,0 +1,8 @@
+# Whitelisted files to copy into the Docker build context
+*
+!api/
+!requirements/common.txt
+!web/
+web/_site/
+web/js/
+!web/js/libs/
