@@ -99,6 +99,18 @@ class Team(Resource):
 
     @require_admin
     @ns.response(200, 'Success')
+    @ns.response(401, 'Not logged in')
+    @ns.response(403, 'Not authorized')
+    @ns.response(404, 'Team not found')
+    def get(self, team_id):
+        """Get a specific team."""
+        team = api.team.get_team(tid=team_id)
+        if not team:
+            raise PicoException('Team not found', status_code=404)
+        return jsonify(api.team.get_team_information(team_id))
+
+    @require_admin
+    @ns.response(200, 'Success')
     @ns.response(400, 'Error parsing request')
     @ns.response(401, 'Not logged in')
     @ns.response(403, 'Not authorized')
