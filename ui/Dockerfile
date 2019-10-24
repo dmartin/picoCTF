@@ -1,17 +1,19 @@
 # picoCTF web UI
 
-FROM node:12.13.0-alpine AS builder
+FROM node:12.13-buster AS builder
 WORKDIR /app
 COPY . .
-RUN apk add --no-cache ruby-dev ruby-full build-base && \
-    gem install --no-document bundler jekyll && \
+RUN apt-get update && \
+    apt-get install -y ruby-full build-essential zlib1g-dev && \
+    gem install jekyll bundler && \
     npm install && \
     npm run-script compile && \
     jekyll build
 
-FROM nginx:1.17.5-alpine AS runner
+FROM nginx:1.17 AS runner
 # Add headers-more nginx module for more_clear_headers directive
-RUN apk add --no-cache nginx-mod-http-headers-more openssl
+RUN apt-get update && \
+    apt-get install -y nginx-extras openssl
 COPY --from=builder /app/_site /app
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY ui.nginx /etc/nginx/sites-enabled/ui.nginx
