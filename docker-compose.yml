@@ -3,7 +3,7 @@ services:
   ui:
     image: picoctf/ui
     build:
-      context: picoCTF-web/ui
+      context: ui
     ports:
       - target: 443
         published: 13371
