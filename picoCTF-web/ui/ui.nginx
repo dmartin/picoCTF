@@ -1,0 +1,90 @@
+server {
+  server_name _;
+
+  root  /app;
+
+  listen 443 ssl http2 reuseport;
+
+  ssl_certificate /etc/pico-tls/pico-cert.crt;
+  ssl_certificate_key /etc/pico-tls/pico-key.key;
+  ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+  ssl_ciphers HIGH:!aNULL:!MD5;
+
+  gzip on;
+  gzip_vary on;
+  gzip_disable "msie6";
+  gzip_types text/plain application/javascript text/xml text/css application/json font/woff2;
+
+  client_max_body_size 15k;
+
+  open_file_cache max=100;
+  open_file_cache_valid 60s;
+  open_file_cache_errors off;
+
+  error_page 404  = /404.html;
+  error_page 401  = /401.html;
+
+  # Block server info in headers and errors
+  server_tokens off;
+
+  # Prevent clickjacking
+  add_header X-Frame-Options "SAMEORIGIN";
+
+  location ~* \.(js|css)$ {
+      expires 1y;
+      add_header Cache-Control "public";
+  }
+
+  location = / {
+      default_type text/html;
+      index  index.html;
+  }
+
+  location ~ /api/ {
+      # allows internal network requests from shell_server (pam related)
+      proxy_set_header Host api;
+
+      proxy_buffer_size 2k;
+      proxy_buffers 24 4k;
+
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_pass http://api;
+      proxy_redirect off;
+  }
+
+  location ~ /swaggerui/ {
+      proxy_set_header Host api;
+
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_pass http://api;
+      proxy_redirect off;
+  }
+
+  location ~ ^/(problems|profile|scoreboard|account|shell|faq|contact)$ {
+      auth_request /api/v1/user/authorize/user;
+      expires -1;
+      default_type text/html;
+      alias /app/$1.html;
+  }
+
+  location ~ ^/(news|reset)$ {
+      default_type text/html;
+      alias /app/$1.html;
+  }
+
+  location ~ ^/(classroom)$ {
+      auth_request /api/v1/user/authorize/teacher;
+      default_type text/html;
+      alias /app/$1.html;
+  }
+
+  location ~ ^/(management)$ {
+      auth_request /api/v1/user/authorize/admin;
+      default_type text/html;
+      alias /app/$1.html;
+  }
+}

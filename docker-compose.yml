@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  ui:
+    image: picoctf/ui
+    build:
+      context: picoCTF-web/ui
+    ports:
+      - target: 443
+        published: 13371
+        protocol: tcp
+        mode: host

@@ -9,7 +9,7 @@
     "@babel/preset-react": "^7.0.0"
   },
   "scripts": {
-    "jsx": "npx babel jsx -d js"
+    "compile": "npx babel jsx -d js --presets=@babel/preset-env,@babel/preset-react"
   },
   "license": "MIT"
 }

@@ -7,11 +7,7 @@
         <link href="{{ css_file }}" rel="stylesheet" media="screen">
     {% endfor %}
 
-    {% if site.mode == 'production' %}
-        {% include analytics.html %}
-    {% else %}
-        <script language="javascript">var gtag = function (a,b,c,d) {}</script>
-    {% endif %}
+    <script language="javascript">var gtag = function (a,b,c,d) {}</script>
 
     {% assign time_stamp = site.time | date: "%s" %}
 

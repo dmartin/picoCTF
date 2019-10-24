@@ -1,0 +1,7 @@
+# Site settings
+title: picoCTF web UI
+exclude: ['jsx', 'node_modules', 'package.json', 'package-lock.json', 'Dockerfile']
+
+# Build settings
+markdown: kramdown
+permalink: none
