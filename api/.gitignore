@@ -1,0 +1,11 @@
+# legacy ignores
+*.pyc
+*.project
+results.xml
+ghostdriver.log
+.idea
+.vagrant
+*~
+# pytest
+coverage_report/
+.coverage
