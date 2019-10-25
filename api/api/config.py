@@ -6,6 +6,7 @@ from functools import wraps
 
 import api
 from api import PicoException
+from pymongo import ReturnDocument
 
 """
 Default Settings
@@ -222,10 +223,14 @@ The {competition_name} Team""",  # noqa (79char)
 def get_settings():
     """Retrieve settings from the database."""
     db = api.db.get_conn()
-    settings = db.settings.find_one({"settings_id": 1}, {"_id": 0, "settings_id": 0})
-    if settings is None:
-        db.settings.insert(default_settings)
-        return default_settings
+    settings = db.settings.find_one_and_update(
+        filter={"settings_id": 1},
+        upsert=True,
+        update={
+            "$setOnInsert": default_settings
+        },
+        return_document=ReturnDocument.AFTER,
+    )
     return settings
 
 
