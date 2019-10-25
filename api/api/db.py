@@ -58,6 +58,7 @@ def get_conn():
 
         __connection.users.create_index("uid", unique=True, name="unique uid")
         __connection.users.create_index(
+<<<<<<< HEAD
             "username", unique=True, name="unique usernames"
         )
         __connection.users.create_index(
@@ -66,6 +67,11 @@ def get_conn():
             collation=Collation(locale="en", strength=CollationStrength.PRIMARY),
             name="unique normalized usernames",
         )
+=======
+            "username", unique=True, collation=Collation(
+                locale="en", strength=CollationStrength.PRIMARY
+            ), name="unique normalized usernames")
+>>>>>>> Remove non-normalized versions of indexes
         __connection.users.create_index("tid")
         __connection.users.create_index("email")
         __connection.users.create_index("demo.parentemail")
@@ -104,6 +110,7 @@ def get_conn():
         __connection.submissions.create_index("suspicious")
 
         __connection.teams.create_index(
+<<<<<<< HEAD
             "team_name", unique=True, name="unique team_names"
         )
         __connection.teams.create_index(
@@ -112,6 +119,11 @@ def get_conn():
             collation=Collation(locale="en", strength=CollationStrength.PRIMARY),
             name="unique normalized team names",
         )
+=======
+            "team_name", unique=True, collation=Collation(
+                locale="en", strength=CollationStrength.PRIMARY
+            ), name="unique normalized team names")
+>>>>>>> Remove non-normalized versions of indexes
         __connection.teams.create_index("tid", unique=True, name="unique tid")
         __connection.teams.create_index(
             "eligibilities",
