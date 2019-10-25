@@ -6,10 +6,13 @@ https://github.com/pypa/sampleproject
 """
 
 import sys
+<<<<<<< HEAD
 
 # To use a consistent encoding
 from codecs import open
 from os import path
+=======
+>>>>>>> Add basic working Dockerfile for API
 
 # Always prefer setuptools over distutils
 from setuptools import find_packages, setup
@@ -18,12 +21,15 @@ from setuptools import find_packages, setup
 if "bdist_wheel" in sys.argv:
     raise RuntimeError("This setup.py does not support wheels")
 
+<<<<<<< HEAD
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the relevant file
 with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
+=======
+>>>>>>> Add basic working Dockerfile for API
 setup(
     name='pico-api',
 
@@ -32,7 +38,11 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version='2.0.0',
     description="picoCTF API",
+<<<<<<< HEAD
     long_description=long_description,
+=======
+
+>>>>>>> Add basic working Dockerfile for API
     # The project's main homepage.
     url="https://github.com/picoCTF/picoCTF",
     # Author details
