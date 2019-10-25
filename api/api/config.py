@@ -7,6 +7,7 @@ from functools import wraps
 import api
 from api import PicoException
 from pymongo import ReturnDocument
+from pymongo.errors import DuplicateKeyError
 
 """
 Default Settings
@@ -223,14 +224,22 @@ The {competition_name} Team""",  # noqa (79char)
 def get_settings():
     """Retrieve settings from the database."""
     db = api.db.get_conn()
-    settings = db.settings.find_one_and_update(
-        filter={"settings_id": 1},
-        upsert=True,
-        update={
-            "$setOnInsert": default_settings
-        },
-        return_document=ReturnDocument.AFTER,
-    )
+    query_filter = {"settings_id": 1}
+    query_projection = {"_id": False, "settings_id": False}
+    try:
+        settings = db.settings.find_one_and_update(
+            filter=query_filter,
+            projection=query_projection,
+            upsert=True,
+            update={
+                "$setOnInsert": default_settings
+            },
+            return_document=ReturnDocument.AFTER,
+        )
+    except DuplicateKeyError:
+        # There's a chance that another thread inserts the default settings
+        # between this one's search and insertion attempt.
+        settings = db.settings.find_one(query_filter, query_projection)
     return settings
 
 
