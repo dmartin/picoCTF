@@ -9,3 +9,21 @@ services:
         published: 13371
         protocol: tcp
         mode: host
+    depends_on:
+      - api
+  api:
+    image: picoctf/api
+    build:
+      context: api
+    ports:
+      - target: 8000
+        published: 13372
+        protocol: tcp
+        mode: host
+    depends_on:
+      - mongo
+      - redis
+  mongo:
+    image: mongo:4.2-bionic
+  redis:
+    image: redis:5
