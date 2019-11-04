@@ -1,0 +1,35 @@
+# docker-compose overrides for local development
+#
+# usage: $ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# - mounts UI and API files from host to permit reloading without rebuilding
+#   - UI changes are automatically reflected upon compilation
+#   - to reload API: $ docker kill --signal=HUP pico_api
+#   - changes to pip dependencies will require rebuilding the API image
+# - exposes additional ports, allowing direct access to each container
+
+version: "3.7"
+services:
+  ui:
+    volumes:
+      - ./ui/_site:/app:ro
+  api:
+    ports:
+      - target: 8000
+        published: 13372
+        protocol: tcp
+        mode: host
+    volumes:
+      - ./api/api:/app/api:ro
+  mongo:
+    ports:
+      - target: 27017
+        published: 13373
+        protocol: tcp
+        mode: host
+  redis:
+    ports:
+      - target: 6379
+        published: 13374
+        protocol: tcp
+        mode: host

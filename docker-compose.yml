@@ -4,6 +4,7 @@ services:
     image: picoctf/ui
     build:
       context: ui
+    container_name: pico_ui
     ports:
       - target: 443
         published: 13371
@@ -15,15 +16,13 @@ services:
     image: picoctf/api
     build:
       context: api
-    ports:
-      - target: 8000
-        published: 13372
-        protocol: tcp
-        mode: host
+    container_name: pico_api
     depends_on:
       - mongo
       - redis
   mongo:
     image: mongo:4.2-bionic
+    container_name: pico_mongo
   redis:
     image: redis:5
+    container_name: pico_redis
