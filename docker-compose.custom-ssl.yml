@@ -1,0 +1,13 @@
+# docker-compose override allowing specification of a custom SSL key and cert
+#
+# usage: $ docker-compose -f docker-compose.yml -f docker-compose.custom-ssl.yml up
+#
+# - expects the directory  ./ui/custom_tls to exist, containing:
+#   - pico-cert.crt (permissions 0644)
+#   - pico-key.key (permissions 0600)
+
+version: "3.7"
+services:
+  ui:
+    volumes:
+      - ./ui/custom_tls:/etc/pico-tls:ro
