@@ -3,7 +3,7 @@
 # and can easily be overridden in group_vars, host_vars, or the command line.
 
 # pico_base_dir set in common.yml
-shell_manager_dir:  "{{pico_base_dir}}/picoCTF-shell"
+shell_manager_dir:  "{{pico_base_dir}}/shell-server"
 
 ###
 # wetty configuration
