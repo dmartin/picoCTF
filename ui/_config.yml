@@ -1,5 +1,5 @@
 # Site settings
-title: picoCTF web UI
+title: picoCTF
 exclude: ['jsx', 'node_modules', 'package.json', 'package-lock.json', 'Dockerfile']
 
 # Build settings
