@@ -1,10 +1,10 @@
 """
 Default Flask app startup settings.
 
-Overridable by specifying APP_SETTINGS_FILE.
+Overridable by voluming in a customized /app/config/custom_settings.py
 """
 
-MONGO_DB_NAME = "ctf"
+MONGO_DB_NAME = "picoCTF"
 MONGO_ADDR = "mongo"
 MONGO_PORT = 27017
 MONGO_USER = None

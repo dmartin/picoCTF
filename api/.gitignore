@@ -9,3 +9,7 @@ ghostdriver.log
 # pytest
 coverage_report/
 .coverage
+
+# custom flask configs
+config/*
+!config/default_settings.py
