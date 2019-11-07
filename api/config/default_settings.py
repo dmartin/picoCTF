@@ -4,13 +4,15 @@ Default Flask app startup settings.
 Overridable by voluming in a customized /app/config/custom_settings.py
 """
 
-MONGO_DB_NAME = "picoCTF"
-MONGO_ADDR = "mongo"
+MONGO_HOST = "mongo"
 MONGO_PORT = 27017
-MONGO_USER = None
-MONGO_PW = None
-MONGO_REPLICA_SETTINGS = None
-MONGO_TLS_SETTINGS = None
+MONGO_DB_NAME = "picoCTF"
+MONGO_USERNAME = None
+MONGO_PASSWORD = None
+MONGO_USE_SSL = False
+MONGO_SSL_CACERTS = None
+MONGO_REPLICASET = None
+MONGO_READPREFERENCE = "primary"
 
 REDIS_DB_NUMBER = 0
 REDIS_ADDR = "redis"

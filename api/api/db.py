@@ -2,13 +2,11 @@
 
 import logging
 
-from flask import current_app
-
 import pymongo
+from api import PicoException
+from flask import current_app
 from pymongo.collation import Collation, CollationStrength
 from pymongo.errors import PyMongoError
-
-from api import PicoException
 
 log = logging.getLogger(__name__)
 
@@ -26,31 +24,27 @@ def get_conn():
     """
     global __client, __connection
     if not __connection:
-        conf = current_app.config
-        if conf["MONGO_USER"] and conf["MONGO_PW"]:
-            uri = "mongodb://{}:{}@{}:{}/{}?authMechanism=SCRAM-SHA-1".format(
-                conf["MONGO_USER"],
-                conf["MONGO_PW"],
-                conf["MONGO_ADDR"],
-                conf["MONGO_PORT"],
-                conf["MONGO_DB_NAME"],
-            )
-            if conf["MONGO_REPLICA_SETTINGS"]:
-                uri = "{}&{}".format(uri, conf["MONGO_REPLICA_SETTINGS"])
-            if conf["MONGO_TLS_SETTINGS"]:
-                uri = "{}&{}".format(uri, conf["MONGO_TLS_SETTINGS"])
-        else:
-            uri = "mongodb://{}:{}/{}".format(
-                conf["MONGO_ADDR"], conf["MONGO_PORT"], conf["MONGO_DB_NAME"]
-            )
         try:
-            __client = pymongo.MongoClient(uri)
-            __connection = __client[conf["MONGO_DB_NAME"]]
+            app_config = current_app.config
+            mongo_config = {
+                'host': app_config['MONGO_HOST'],
+                'port': app_config['MONGO_PORT'],
+                'ssl': app_config['MONGO_USE_SSL'],
+                'ssl_ca_certs': app_config['MONGO_SSL_CACERTS'],
+                'replicaset': app_config['MONGO_REPLICASET'],
+                'readPreference': app_config['MONGO_READPREFERENCE'],
+            }
+            if app_config['MONGO_USERNAME']:
+                mongo_config.update({
+                    'username': app_config['MONGO_USERNAME'],
+                    'password': app_config['MONGO_PASSWORD'],
+                    'authSource': app_config['MONGO_DB_NAME'],
+                })
+            __client = pymongo.MongoClient(**mongo_config)
+            __connection = __client[app_config['MONGO_DB_NAME']]
         except PyMongoError as error:
             raise PicoException(
-                "Internal server error. Please contact a system adminstrator.",
-                data={"original_error": error},
-            )
+                'Internal server error', data={'original_error': error})
 
         log.debug("Ensuring mongo is indexed.")
 
@@ -58,20 +52,9 @@ def get_conn():
 
         __connection.users.create_index("uid", unique=True, name="unique uid")
         __connection.users.create_index(
-<<<<<<< HEAD
-            "username", unique=True, name="unique usernames"
-        )
-        __connection.users.create_index(
-            "username",
-            unique=True,
-            collation=Collation(locale="en", strength=CollationStrength.PRIMARY),
-            name="unique normalized usernames",
-        )
-=======
             "username", unique=True, collation=Collation(
                 locale="en", strength=CollationStrength.PRIMARY
             ), name="unique normalized usernames")
->>>>>>> Remove non-normalized versions of indexes
         __connection.users.create_index("tid")
         __connection.users.create_index("email")
         __connection.users.create_index("demo.parentemail")
@@ -110,20 +93,9 @@ def get_conn():
         __connection.submissions.create_index("suspicious")
 
         __connection.teams.create_index(
-<<<<<<< HEAD
-            "team_name", unique=True, name="unique team_names"
-        )
-        __connection.teams.create_index(
-            "team_name",
-            unique=True,
-            collation=Collation(locale="en", strength=CollationStrength.PRIMARY),
-            name="unique normalized team names",
-        )
-=======
             "team_name", unique=True, collation=Collation(
                 locale="en", strength=CollationStrength.PRIMARY
             ), name="unique normalized team names")
->>>>>>> Remove non-normalized versions of indexes
         __connection.teams.create_index("tid", unique=True, name="unique tid")
         __connection.teams.create_index(
             "eligibilities",
