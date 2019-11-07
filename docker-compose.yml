@@ -20,6 +20,19 @@ services:
     depends_on:
       - mongo
       - redis
+  cache-daemon:
+    image: picoctf/api
+    build:
+      context: api
+    container_name: pico_cache_daemon
+    depends_on:
+      - mongo
+      - redis
+      - api
+    entrypoint:
+      - python
+      - -u
+      - /app/cache_daemon.py
   mongo:
     image: mongo:4.2-bionic
     container_name: pico_mongo
