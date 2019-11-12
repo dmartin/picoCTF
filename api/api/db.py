@@ -27,24 +27,25 @@ def get_conn():
         try:
             app_config = current_app.config
             mongo_config = {
-                'host': app_config['MONGO_HOST'],
-                'port': app_config['MONGO_PORT'],
-                'ssl': app_config['MONGO_USE_SSL'],
-                'ssl_ca_certs': app_config['MONGO_SSL_CACERTS'],
-                'replicaset': app_config['MONGO_REPLICASET'],
-                'readPreference': app_config['MONGO_READPREFERENCE'],
+                "host": app_config["MONGO_HOST"],
+                "port": app_config["MONGO_PORT"],
+                "ssl": app_config["MONGO_USE_SSL"],
+                "ssl_ca_certs": app_config["MONGO_SSL_CACERTS"],
+                "replicaset": app_config["MONGO_REPLICASET"],
+                "readPreference": app_config["MONGO_READPREFERENCE"],
             }
-            if app_config['MONGO_USERNAME']:
-                mongo_config.update({
-                    'username': app_config['MONGO_USERNAME'],
-                    'password': app_config['MONGO_PASSWORD'],
-                    'authSource': app_config['MONGO_DB_NAME'],
-                })
+            if app_config["MONGO_USERNAME"]:
+                mongo_config.update(
+                    {
+                        "username": app_config["MONGO_USERNAME"],
+                        "password": app_config["MONGO_PASSWORD"],
+                        "authSource": app_config["MONGO_DB_NAME"],
+                    }
+                )
             __client = pymongo.MongoClient(**mongo_config)
-            __connection = __client[app_config['MONGO_DB_NAME']]
+            __connection = __client[app_config["MONGO_DB_NAME"]]
         except PyMongoError as error:
-            raise PicoException(
-                'Internal server error', data={'original_error': error})
+            raise PicoException("Internal server error", data={"original_error": error})
 
         log.debug("Ensuring mongo is indexed.")
 
@@ -52,9 +53,11 @@ def get_conn():
 
         __connection.users.create_index("uid", unique=True, name="unique uid")
         __connection.users.create_index(
-            "username", unique=True, collation=Collation(
-                locale="en", strength=CollationStrength.PRIMARY
-            ), name="unique normalized usernames")
+            "username",
+            unique=True,
+            collation=Collation(locale="en", strength=CollationStrength.PRIMARY),
+            name="unique normalized usernames",
+        )
         __connection.users.create_index("tid")
         __connection.users.create_index("email")
         __connection.users.create_index("demo.parentemail")
@@ -93,9 +96,11 @@ def get_conn():
         __connection.submissions.create_index("suspicious")
 
         __connection.teams.create_index(
-            "team_name", unique=True, collation=Collation(
-                locale="en", strength=CollationStrength.PRIMARY
-            ), name="unique normalized team names")
+            "team_name",
+            unique=True,
+            collation=Collation(locale="en", strength=CollationStrength.PRIMARY),
+            name="unique normalized team names",
+        )
         __connection.teams.create_index("tid", unique=True, name="unique tid")
         __connection.teams.create_index(
             "eligibilities",

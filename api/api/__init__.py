@@ -70,9 +70,9 @@ def create_app(config=None):
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
     # Load default Flask config
-    app.config.from_pyfile('/app/config/default_settings.py')
+    app.config.from_pyfile("/app/config/default_settings.py")
     # Override Flask config if custom file provided
-    app.config.from_pyfile('/app/config/custom_settings.py', silent=True)
+    app.config.from_pyfile("/app/config/custom_settings.py", silent=True)
 
     # Add any new runtime settings to DB
     with app.app_context():

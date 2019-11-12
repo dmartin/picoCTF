@@ -231,9 +231,7 @@ def get_settings():
             filter=query_filter,
             projection=query_projection,
             upsert=True,
-            update={
-                "$setOnInsert": default_settings
-            },
+            update={"$setOnInsert": default_settings},
             return_document=ReturnDocument.AFTER,
         )
     except DuplicateKeyError:
