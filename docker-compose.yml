@@ -12,6 +12,7 @@ services:
         mode: host
     depends_on:
       - api
+      - webshell-dispatch
   api:
     image: picoctf/api
     build:
@@ -39,3 +40,20 @@ services:
   redis:
     image: redis:5
     container_name: pico_redis
+  webshell-dispatch:
+    image: picoctf/webshell-dispatch
+    build:
+      context: webshell
+      dockerfile: dispatcher.Dockerfile
+    container_name: pico_webshell_dispatch
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - webshell-toolbox
+  webshell-toolbox:
+    # Not used, but included so that the toolbox image is built.
+    # See https://github.com/docker/compose/issues/1896
+    image: picoctf/toolbox
+    build:
+      context: webshell
+      dockerfile: toolbox.Dockerfile

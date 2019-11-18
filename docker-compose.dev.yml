@@ -33,3 +33,13 @@ services:
         published: 13374
         protocol: tcp
         mode: host
+  webshell-dispatch:
+    ports:
+      - target: 8080
+        published: 13375
+        protocol: tcp
+        mode: host
+      - target: 22
+        published: 13376
+        protocol: tcp
+        mode: host

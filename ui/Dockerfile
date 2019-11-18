@@ -4,7 +4,8 @@ FROM node:12.13-buster AS builder
 WORKDIR /app
 COPY . .
 RUN apt-get update && \
-    apt-get install -y ruby-full build-essential zlib1g-dev && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      ruby-full build-essential zlib1g-dev && \
     gem install jekyll bundler && \
     npm install && \
     npm run-script compile && \
