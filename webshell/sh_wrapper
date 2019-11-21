@@ -1,3 +1,0 @@
-#!/bin/dash -p
-# see https://github.com/picoCTF/picoCTF/issues/150
-exec /bin/dash -p "$@"

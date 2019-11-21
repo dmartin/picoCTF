@@ -21,7 +21,9 @@ RUN apt-get update && \
     nasm \
     perl \
     python \
+    python-pip \
     python3 \
+    python3-pip \
     ruby \
     # common command line tools
     dos2unix \
@@ -49,6 +51,9 @@ RUN apt-get update && \
     socat \
     traceroute \
     wget \
+    # PAM dependencies
+    libpam-python \
+    python-setuptools \
     # terminal multiplexers
     screen \
     tmux \
@@ -63,24 +68,26 @@ RUN apt-get purge gdb && \
       gdb=8.1-0ubuntu3 && \
     echo "gdb hold" | dpkg --set-selections
 
-# Install pam dependencies
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      libpam-python \
-      python-pip \
-      python-setuptools
-RUN pip install \
+# Install Python 2 packages, including PAM dependencies
+# ipython 6.0 dropped support for Python 2
+RUN pip2 install \
       "pyOpenSSL==19.0.0" \
       "cryptography==2.7" \
-      "requests==2.22.0"
-
-# Install system python2 tools
-# (relies on python-pip from previous step)
-# ipython 6.0 dropped support for python2
-RUN pip2 install \
+      "requests==2.22.0" \
       "ipython<6.0" \
       "ptpython" \
       "pwntools"
 
 # Set nano as the default editor
 RUN update-alternatives --set editor /bin/nano
+
+# Set up PAM authentication
+COPY ./pam_auth.py /root/pam_auth.py
+RUN chmod 0644 /root/pam_auth.py && \
+    mkdir /lib/security && \
+    mv /root/pam_auth.py /lib/security/pam_auth.py
+RUN echo 'auth [success=done auth_err=die try_again=reset default=ignore] pam_python.so pam_auth.py' > /etc/pam.d/login
+COPY ./securebashrc /root/securebashrc
+
+# Force PAM authentication against the pico API
+ENTRYPOINT login

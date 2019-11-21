@@ -13,6 +13,8 @@ services:
     depends_on:
       - api
       - webshell-dispatch
+    networks:
+      - api-components
   api:
     image: picoctf/api
     build:
@@ -21,6 +23,10 @@ services:
     depends_on:
       - mongo
       - redis
+    networks:
+      - api-components
+      - db-backend
+      - webshell-auth
   cache-daemon:
     image: picoctf/api
     build:
@@ -34,12 +40,18 @@ services:
       - python
       - -u
       - /app/cache_daemon.py
+    networks:
+      - db-backend
   mongo:
     image: mongo:4.2-bionic
     container_name: pico_mongo
+    networks:
+      - db-backend
   redis:
     image: redis:5
     container_name: pico_redis
+    networks:
+      - db-backend
   webshell-dispatch:
     image: picoctf/webshell-dispatch
     build:
@@ -57,3 +69,12 @@ services:
     build:
       context: webshell
       dockerfile: toolbox.Dockerfile
+    depends_on:
+      - api
+networks:
+  api-components:
+  db-backend:
+  webshell-auth:
+volumes:
+  webshell-homes:
+    external: false
