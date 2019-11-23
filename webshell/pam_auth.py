@@ -113,5 +113,6 @@ def pam_sm_authenticate(pam_handle, flags, argv):
         time.sleep(3)
         return pamh.PAM_AUTH_ERR
 
+
 def pam_sm_setcred(pamh, flags, argv):
     return pamh.PAM_SUCCESS

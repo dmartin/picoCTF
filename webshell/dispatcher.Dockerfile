@@ -24,4 +24,4 @@ RUN mkdir /opt/gotty && \
     wget https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_amd64.tar.gz && \
     tar xzf gotty_linux_amd64.tar.gz
 
-ENTRYPOINT ["/opt/gotty/gotty", "-w", "docker", "run", "-it", "-v=webshell-homes:/home", "--rm", "--cap-add=LINUX_IMMUTABLE", "--network=picoctf_webshell-auth", "picoctf/toolbox"]
+ENTRYPOINT ["/opt/gotty/gotty", "-w", "--title-format=pico web shell", "docker", "run", "-it", "-v=webshell-homes:/home", "--rm", "--cap-add=LINUX_IMMUTABLE", "--network=picoctf_webshell-auth", "picoctf/toolbox"]

@@ -1,21 +1,9 @@
 ---
 layout: default
 title: Shell
-post_scripts:
- - js/shell.js
 startup_functions:
  - redirectIfNotLoggedIn()
 ---
-
-<script type="text/template" id="shell-servers-template">
-    <% _.each(servers, function(server){ %>
-      <% var url = server.protocol.toLowerCase() + "://" + server.host + "/shell"; %>
-      <div class="well">
-        <h3 class="text-center"><%- server.host %> - <a href="<%- url %>">Full Screen</a> </h3>
-        <iframe src="<%- url %>" width="100%" height="600px"></iframe>
-      </div>
-    <% }); %>
-</script>
 
 <script type="text/javascript">
   $(window).on('beforeunload', function(){
@@ -36,7 +24,10 @@ startup_functions:
     </div>
   </div>
   <div class="row">
-    <div id="shell-servers"></div>
+    <div class="well">
+      <h3 class="text-center"><a href="/webshell">Full Screen</a></h3>
+      <iframe src="/webshell" width="100%" height="600px"></iframe>
+    </div>
   </div>
 </div>
 
