@@ -121,31 +121,6 @@ const CompetitionCheck = React.createClass({
     });
   },
 
-  checkProblemsAlive(setStatus) {
-    apiCall("GET", "/api/v1/shell_servers?assigned_only=false").done(
-      data => {
-        let status = "passing";
-        const servers = data;
-
-        if (servers.length === 0) {
-          status = "failing";
-        }
-
-        const apiCalls = $.map(servers, server =>
-          apiCall("GET", `/api/v1/shell_servers/${server.sid}/status`)
-        );
-        $.when.apply(this, apiCalls).done(function() {
-          for (let result of $.map(arguments, _.first)) {
-            if (!result.status) {
-              status = "failing";
-            }
-          }
-          setStatus(status);
-        });
-      }
-    );
-  },
-
   checkDownloadsAccessible(setStatus) {
     apiCall(
       "GET",
@@ -187,11 +162,6 @@ const CompetitionCheck = React.createClass({
   render() {
     const sanityChecks = [
       { name: "Check Enabled Problems", func: this.checkEnabledProblems },
-      {
-        name: "Problems Alive on Shell Servers",
-        func: this.checkProblemsAlive
-        //{name: "Problem Downloads Accessible", func: @checkDownloadsAccessible}
-      }
     ];
 
     return (

@@ -1,7 +1,7 @@
 """Scoreboard management."""
 
 import api
-from api import block_before_competition, PicoException, require_admin
+from api import PicoException, require_admin
 from flask import jsonify
 from flask_restplus import Namespace, Resource
 

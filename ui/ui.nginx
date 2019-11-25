@@ -36,7 +36,6 @@ server {
   }
 
   location ~ /api/ {
-      # allows internal network requests from shell_server (pam related)
       proxy_set_header Host api;
 
       proxy_buffer_size 2k;

@@ -6,6 +6,7 @@ startup_functions:
 ---
 
 <script type="text/javascript">
+  // Suppress warning upon navigating away from page
   $(window).on('beforeunload', function(){
     $("iframe").remove();
     return;
@@ -13,16 +14,6 @@ startup_functions:
 </script>
 
 <div class="container">
-  <div class="row">
-    <div class="well">
-      <ul class="text-left">
-        <li>Your login credentials are the same on our website and on the shell server.</li>
-        <li>Duplicate this tab in a new window to see the challenge problems and the shell side by side.</li>
-      </ul>
-      <p class="text-center">
-      </p>
-    </div>
-  </div>
   <div class="row">
     <div class="well">
       <h3 class="text-center"><a href="/webshell">Full Screen</a></h3>

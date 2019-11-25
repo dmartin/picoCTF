@@ -678,21 +678,7 @@ problems_endpoint_response = [
 
 def load_sample_problems():
     """Load the sample problems and bundle into the DB."""
-    with app().app_context():
-        db = get_conn()
-        db.shell_servers.insert_one(
-            {
-                "sid": "728f36885f7c4686805593b9e4988c30",
-                "name": "Test shell server",
-                "host": "testing.picoctf.com",
-                "port": "22",
-                "username": "username",
-                "password": "password",
-                "protocol": "HTTPS",
-                "server_number": 1,
-            }
-        )
-        api.problem.load_published(json.loads(sample_shellserver_publish_output))
+    pass
 
 
 def enable_sample_problems():

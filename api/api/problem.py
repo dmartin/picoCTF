@@ -77,13 +77,13 @@ def get_all_categories():
     return db.problems.find(match).distinct("category")
 
 
-def upsert_problem(problem, sid):
+def upsert_problem(problem):
     """
     Add or update a problem.
 
     Args:
         problem: problem dict
-        sid: shell server ID
+
     Returns:
         The created/updated problem ID.
     """
@@ -101,15 +101,11 @@ def upsert_problem(problem, sid):
     # Initially disable problems
     problem["disabled"] = True
 
-    # Assign instance IDs and server numbers
-    server_number = api.shell_servers.get_server(sid)["server_number"]
+    # Assign instance IDs
     for instance in problem["instances"]:
         instance["iid"] = api.common.hash(
-            str(instance["instance_number"]) + sid + problem["pid"]
+            str(instance["instance_number"]) + problem["pid"]
         )
-        instance["sid"] = sid
-        if server_number is not None:
-            instance["server_number"] = server_number
 
     if problem.get("walkthrough"):  # Falsy for None and empty string
         problem["has_walkthrough"] = True
@@ -119,10 +115,6 @@ def upsert_problem(problem, sid):
     # If the problem already exists, update it instead
     existing = db.problems.find_one({"pid": problem["pid"]}, {"_id": 0})
     if existing is not None:
-        # Copy over instances on other shell servers from the existing version
-        other_server_instances = [i for i in existing["instances"] if i["sid"] != sid]
-        problem["instances"].extend(other_server_instances)
-
         # Copy over the disabled state from the old problem, or
         # set to true if there are no instances
         problem["disabled"] = existing["disabled"] or len(problem["instances"]) == 0
@@ -152,28 +144,13 @@ def assign_instance_to_team(pid, tid=None, reassign=False):
 
     available_instances = problem["instances"]
 
-    settings = api.config.get_settings()
-    if settings["shell_servers"]["enable_sharding"]:
-        available_instances = list(
-            filter(
-                lambda i: i.get("server_number") == team.get("server_number", 1),
-                problem["instances"],
-            )
-        )
-
     if pid in team["instances"] and not reassign:
         raise PicoException(
             "Team with tid {} already has an instance of pid {}.".format(tid, pid)
         )
 
     if len(available_instances) == 0:
-        if settings["shell_servers"]["enable_sharding"]:
-            raise PicoException(
-                "Your assigned shell server is currently down. "
-                + "Please contact an admin."
-            )
-        else:
-            raise PicoException("Problem {} has no instances to assign.".format(pid))
+        raise PicoException("Problem {} has no instances to assign.".format(pid))
 
     instance_number = randint(0, len(available_instances) - 1)
     iid = available_instances[instance_number]["iid"]
@@ -425,7 +402,7 @@ def load_published(data):
         data: The output of "shell_manager publish"
     """
     for problem in data["problems"]:
-        upsert_problem(problem, sid=data["sid"])
+        upsert_problem(problem)
 
     if "bundles" in data:
         for bundle in data["bundles"]:
@@ -455,9 +432,7 @@ def sanitize_problem_data(data):
         "pkg_dependencies",
         "sanitized_name",
         "service",
-        "server_number",
         "should_symlink",
-        "sid",
         "socket",
         "static_flag",
         "tags",

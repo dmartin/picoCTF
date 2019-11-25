@@ -86,10 +86,6 @@ def get_conn():
 
         __connection.settings.create_index("settings_id", unique=True)
 
-        __connection.shell_servers.create_index(
-            "sid", unique=True, name="unique shell sid"
-        )
-
         __connection.submissions.create_index([("pid", 1), ("uid", 1), ("correct", 1)])
         __connection.submissions.create_index([("pid", 1), ("tid", 1), ("correct", 1)])
         __connection.submissions.create_index([("uid", 1), ("correct", 1)])

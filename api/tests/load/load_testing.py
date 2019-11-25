@@ -36,7 +36,6 @@ from config import (
     SCOREBOARDS_ENDPOINT,
     SETTINGS_ENDPOINT,
     SHELL_PAGE_URL,
-    SHELL_SERVERS_ENDPOINT,
     STATUS_ENDPOINT,
     SUBMISSIONS_ENDPOINT,
     TEAM_ENDPOINT,
@@ -188,7 +187,6 @@ def simulate_loading_shell_page(l):
     """Simulate the calls made upon loading the shell page."""
     simulate_loading_any_page(l)
     l.client.get(SHELL_PAGE_URL)
-    l.client.get(SHELL_SERVERS_ENDPOINT)
 
 
 def simulate_loading_game_page(l):

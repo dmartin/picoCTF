@@ -14,7 +14,6 @@ from .minigames import ns as minigames_ns
 from .problems import ns as problems_ns
 from .scoreboards import ns as scoreboards_ns
 from .settings import ns as settings_ns
-from .shell_servers import ns as shell_servers_ns
 from .stats import ns as stats_ns
 from .status import ns as status_ns
 from .submissions import ns as submissions_ns
@@ -36,7 +35,6 @@ for ns in [
     problems_ns,
     scoreboards_ns,
     settings_ns,
-    shell_servers_ns,
     stats_ns,
     status_ns,
     submissions_ns,

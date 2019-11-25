@@ -106,33 +106,6 @@ achievement_patch_req = achievement_req.copy()
 for arg in achievement_patch_req.args:
     arg.required = False
 
-# Shell server output schema
-# (This is too complex for reqparse to really handle, so we'll trust it.
-#  If we move to another validation engine e.g. marshmallow, we can revisit.)
-shell_server_out = reqparse.RequestParser()
-shell_server_out.add_argument(
-    "sid",
-    required=True,
-    type=str,
-    location="args",
-    help="Shell server ID.",
-    error="Shell server ID is required",
-)
-shell_server_out.add_argument(
-    "problems",
-    required=False,
-    type=list,
-    location="json",
-    error="Problems array is invalid",
-)
-shell_server_out.add_argument(
-    "bundles",
-    required=False,
-    type=list,
-    location="json",
-    error="Bundles array is invalid",
-)
-
 # Problem PATCH request schema
 # ("disabled" is the only mutable field as the others are managed by the
 #  shell manager.)
@@ -144,94 +117,6 @@ problem_patch_req.add_argument(
     location="json",
     help="Whether the problem is disabled.",
     error="Specify whether the problem is disabled",
-)
-
-# Shell server list request schema
-shell_server_list_req = reqparse.RequestParser()
-shell_server_list_req.add_argument(
-    "assigned_only",
-    required=False,
-    type=inputs.boolean,
-    default=True,
-    location="args",
-    help="Whether to include only shell servers assigned to the"
-    + " current user. Must be admin to disable.",
-    error="Specify a boolean value for assigned_only",
-)
-
-# Shell server request schema
-shell_server_req = reqparse.RequestParser()
-shell_server_req.add_argument(
-    "name",
-    required=True,
-    type=str,
-    location="json",
-    help="Shell server display name.",
-    error="Shell server display name is required",
-)
-shell_server_req.add_argument(
-    "host",
-    required=True,
-    type=str,
-    location="json",
-    help="Shell server hostname.",
-    error="Shell server hostname is required",
-)
-shell_server_req.add_argument(
-    "port",
-    required=True,
-    type=inputs.int_range(1, 65535),
-    location="json",
-    help="Shell server port.",
-    error="Shell server port is required (1-65535)",
-)
-shell_server_req.add_argument(
-    "username",
-    required=True,
-    type=str,
-    location="json",
-    help="Username.",
-    error="Shell server username is required",
-)
-shell_server_req.add_argument(
-    "password",
-    required=True,
-    type=str,
-    location="json",
-    help="Password.",
-    error="Shell server password is required",
-)
-shell_server_req.add_argument(
-    "protocol",
-    required=True,
-    type=str,
-    choices=["HTTP", "HTTPS"],
-    location="json",
-    help="Protocol used to serve web resources.",
-    error="Shell server protocol is required (HTTP/HTTPS)",
-)
-shell_server_req.add_argument(
-    "server_number",
-    required=False,
-    type=inputs.positive,
-    location="json",
-    help="Server number (will be automatically assigned if not provided).",
-    error="Shell server number must be a positive integer",
-)
-shell_server_patch_req = shell_server_req.copy()
-for arg in shell_server_patch_req.args:
-    arg.required = False
-
-# Shell server reassignment schema
-shell_server_reassignment_req = reqparse.RequestParser()
-shell_server_reassignment_req.add_argument(
-    "include_assigned",
-    required=False,
-    type=inputs.boolean,
-    location="json",
-    help="Whether to update the assignments of teams that already have "
-    + "an assigned shell server.",
-    error="Specify a boolean value for include_assigned",
 )
 
 # Exception request schema
@@ -311,9 +196,6 @@ settings_patch_req.add_argument(
 )
 settings_patch_req.add_argument(
     "logging", required=False, type=object_type, location="json"
-)
-settings_patch_req.add_argument(
-    "shell_servers", required=False, type=object_type, location="json"
 )
 settings_patch_req.add_argument(
     "max_batch_registrations",

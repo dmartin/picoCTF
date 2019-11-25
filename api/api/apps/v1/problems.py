@@ -25,7 +25,7 @@ from flask_restplus import Namespace, Resource
 import api
 from api import block_before_competition, PicoException, require_admin, require_login
 
-from .schemas import problem_patch_req, problems_req, shell_server_out
+from .schemas import problem_patch_req, problems_req
 
 ns = Namespace("problems", description="Problem management")
 
@@ -117,54 +117,6 @@ class ProblemList(Resource):
             return jsonify({"count": len(problems)})
         else:
             return jsonify(problems)
-
-    @require_admin
-    @ns.expect(shell_server_out)
-    @ns.response(200, "Problem list updated")
-    @ns.response(401, "Not logged in")
-    @ns.response(403, "Not authorized")
-    @ns.response(404, "Shell server not found")
-    def patch(self):
-        """
-        Update the problem and bundle state via shell server output.
-
-        If `shell_manager publish` output is not provided as a payload,
-        will attempt to automatically request it from the provided
-        shell server.
-
-        Note that this will only add new / update existing problems – if a
-        problem has been removed from the shell server, it should be
-        disabled using the PATCH /<problem_id> endpoint or manually
-        removed from the database.
-        """
-        req = {
-            k: v
-            for k, v in shell_server_out.parse_args(strict=True).items()
-            if v is not None
-        }
-        # Check that the provided sid is valid
-        found = api.shell_servers.get_server(req["sid"])
-        if found is None:
-            raise PicoException("Shell server not found", status_code=404)
-        if "problems" in req:
-            api.problem.load_published(
-                {
-                    "problems": req["problems"],
-                    "bundles": req["bundles"],
-                    "sid": req["sid"],
-                }
-            )
-        else:
-            output = api.shell_servers.get_publish_output(req["sid"])
-            api.problem.load_published(
-                {
-                    "problems": output["problems"],
-                    "bundles": output["bundles"],
-                    "sid": req["sid"],
-                }
-            )
-
-        return jsonify({"success": True})
 
 
 @require_login

@@ -51,6 +51,7 @@ default_settings = {
         "dip",
         "disk",
         "dnsmasq",
+        "docker",
         "fax",
         "floppy",
         "games",
@@ -74,10 +75,10 @@ default_settings = {
         "plugdev",
         "pollinate",
         "proxy",
+        "python",
         "root",
         "sasl",
         "shadow",
-        "shellinabox",
         "src",
         "ssh",
         "sshd",
@@ -88,6 +89,7 @@ default_settings = {
         "syslog",
         "tape",
         "tty",
+        "ttyd",
         "ubuntu",
         "users",
         "utmp",
@@ -98,7 +100,6 @@ default_settings = {
         "vboxsf",
         "video",
         "voice",
-        "wetty",
     ],
     # EMAIL (SMTP)
     "email": {
@@ -193,13 +194,6 @@ The {competition_name} Team""",  # noqa (79char)
         "captcha_url": "https://www.google.com/recaptcha/api/siteverify",
         "reCAPTCHA_public_key": "",
         "reCAPTCHA_private_key": "",
-    },
-    # SHELL SERVERS
-    "shell_servers": {
-        "enable_sharding": False,
-        "default_stepping": 5000,
-        "steps": [7500, 12500, 17500],
-        "limit_added_range": False,
     },
     # MINIGAME TOKEN VALUES
     "minigame": {

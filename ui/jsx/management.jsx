@@ -101,9 +101,6 @@ const ManagementTabs = React.createClass({
             exceptions={this.state.exceptions}
           />
         </Tab>
-        <Tab eventKey="shell-servers" title="Shell Server">
-          <ShellServerTab />
-        </Tab>
         <Tab eventKey="configuration" title="Configuration">
           <SettingsTab />
         </Tab>
