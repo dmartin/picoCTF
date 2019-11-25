@@ -525,8 +525,11 @@ def deploy_files(
             shutil.copy2(file_source, output_path)
 
         # set the ownership based on the type of file
-        if isinstance(f, ProtectedFile) or isinstance(f, ExecutableFile) or \
-           isinstance(f, GroupWriteDirectory):
+        if (
+            isinstance(f, ProtectedFile)
+            or isinstance(f, ExecutableFile)
+            or isinstance(f, GroupWriteDirectory)
+        ):
             os.chown(output_path, default.pw_uid, user.pw_gid)
         else:
             uid = default.pw_uid if f.user is None else getpwnam(f.user).pw_uid

@@ -54,8 +54,7 @@ def create_home_dir(user):
     subprocess.check_output(["chattr", "+a", os.path.join(home, ".bash_history")])
 
     # Secure bashrc
-    subprocess.check_output(
-        ["cp", "/root/securebashrc", os.path.join(home, ".bashrc")])
+    subprocess.check_output(["cp", "/root/securebashrc", os.path.join(home, ".bashrc")])
     subprocess.check_output(["chown", "root:" + user, os.path.join(home, ".bashrc")])
     subprocess.check_output(["chmod", "755", os.path.join(home, ".bashrc")])
     subprocess.check_output(["chattr", "+a", os.path.join(home, ".bashrc")])
@@ -102,13 +101,23 @@ def pam_sm_authenticate(pam_handle, flags, argv):
     )
 
     auth_response = authenticate(username, pw_response.resp)
-    if (auth_response.get("success", False)):
+    if auth_response.get("success", False):
         try:
-            uid = auth_response['user']['shell_uid']
+            uid = auth_response["user"]["shell_uid"]
+            subprocess.check_output(["/usr/sbin/groupadd", "--gid", str(uid), username])
             subprocess.check_output(
-                ["/usr/sbin/groupadd", "--gid", str(uid), username])
-            subprocess.check_output(
-                ["/usr/sbin/useradd", "-M", "--shell", "/bin/bash", "--uid", str(uid), "--gid", str(uid), username])
+                [
+                    "/usr/sbin/useradd",
+                    "-M",
+                    "--shell",
+                    "/bin/bash",
+                    "--uid",
+                    str(uid),
+                    "--gid",
+                    str(uid),
+                    username,
+                ]
+            )
             if not os.path.isdir(pwd.getpwnam(username).pw_dir):
                 create_home_dir(username)
             display("Welcome, {}!".format(username))

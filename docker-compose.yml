@@ -71,6 +71,7 @@ services:
     build:
       context: webshell
       dockerfile: toolbox.Dockerfile
+    entrypoint: /bin/true
     depends_on:
       - api
 networks:

@@ -276,7 +276,7 @@ def add_user(params, batch_registration=False):
         "completed_minigames": [],
         "unlocked_walkthroughs": [],
         "tokens": 0,
-        "shell_uid": generate_shell_uid(uid)
+        "shell_uid": generate_shell_uid(uid),
     }
     db.users.insert_one(user)
 
@@ -693,7 +693,7 @@ def generate_shell_uid(uid):
     thread_random = random.Random()
     thread_random.seed(uid)
     db = api.db.get_conn()
-    while (not is_valid_uid):
+    while not is_valid_uid:
         candidate = thread_random.randint(UID_MIN, UID_MAX)
         is_valid_uid = (
             candidate not in UID_EXCLUDE

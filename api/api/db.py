@@ -58,7 +58,9 @@ def get_conn():
             collation=Collation(locale="en", strength=CollationStrength.PRIMARY),
             name="unique normalized usernames",
         )
-        __connection.users.create_index("shell_uid", unique=True, name="unique linux uid")
+        __connection.users.create_index(
+            "shell_uid", unique=True, name="unique linux uid"
+        )
 
         __connection.users.create_index("tid")
         __connection.users.create_index("email")

@@ -15,9 +15,7 @@ from .schemas import (
     user_extdata_req,
 )
 
-ns = Namespace(
-    "user", description="Authentication and information about current user"
-)
+ns = Namespace("user", description="Authentication and information about current user")
 
 USERDATA_FILTER = [
     "admin",
@@ -82,10 +80,7 @@ class LoginResponse(Resource):
         """Log in."""
         req = login_req.parse_args(strict=False)
         api.user.login(req["username"], req["password"])
-        return jsonify({
-            "success": True,
-            "user": api.user.get_user(),
-        })
+        return jsonify({"success": True, "user": api.user.get_user(),})
 
 
 @ns.route("/logout")
