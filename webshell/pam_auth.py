@@ -28,7 +28,7 @@ def authenticate(user, password):
         json={"username": user, "password": password},
         timeout=TIMEOUT,
     )
-    return res.json().get("success", False)
+    return res.json()
 
 
 def display(string):
@@ -42,7 +42,7 @@ def prompt(string):
 
 
 def create_home_dir(user):
-    subprocess.check_output(["mkhomedir_helper", user])
+    subprocess.check_output(["/sbin/mkhomedir_helper", user])
     home = pwd.getpwnam(user).pw_dir
 
     # Append only bash history
@@ -68,6 +68,9 @@ def create_home_dir(user):
     # User should not own their home directory
     subprocess.check_output(["chown", "root:" + user, home])
     subprocess.check_output(["chmod", "1770", home])
+
+    # Ensure /home is not world-readable
+    subprocess.check_output(["chmod", "o-r", "/home"])
 
     # Check if user quota is enabled, if so, add quota for this user
     if os.path.exists(USER_QUOTA_FILE):
@@ -98,10 +101,14 @@ def pam_sm_authenticate(pam_handle, flags, argv):
         "Enter your pico account password (characters will be hidden): "
     )
 
-    if (authenticate(username, pw_response.resp)):
+    auth_response = authenticate(username, pw_response.resp)
+    if (auth_response.get("success", False)):
         try:
+            uid = auth_response['user']['shell_uid']
             subprocess.check_output(
-                ["/usr/sbin/useradd", "-M", "-s", "/bin/bash", username])
+                ["/usr/sbin/groupadd", "--gid", str(uid), username])
+            subprocess.check_output(
+                ["/usr/sbin/useradd", "-M", "--shell", "/bin/bash", "--uid", str(uid), "--gid", str(uid), username])
             if not os.path.isdir(pwd.getpwnam(username).pw_dir):
                 create_home_dir(username)
             display("Welcome, {}!".format(username))

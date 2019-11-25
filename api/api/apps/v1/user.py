@@ -16,14 +16,15 @@ from .schemas import (
 )
 
 ns = Namespace(
-    "user", description="Authentication and information about " + "current user"
+    "user", description="Authentication and information about current user"
 )
 
 USERDATA_FILTER = [
     "admin",
-    "extdata",
     "completed_minigames",
+    "extdata",
     "logged_in",
+    "shell_uid",
     "teacher",
     "tid",
     "tokens",
@@ -81,7 +82,10 @@ class LoginResponse(Resource):
         """Log in."""
         req = login_req.parse_args(strict=False)
         api.user.login(req["username"], req["password"])
-        return jsonify({"success": True, "username": req["username"]})
+        return jsonify({
+            "success": True,
+            "user": api.user.get_user(),
+        })
 
 
 @ns.route("/logout")

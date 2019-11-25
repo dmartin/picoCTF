@@ -1,6 +1,7 @@
 """User management and registration module."""
 
 import json
+import random
 import re
 import urllib.parse
 import urllib.request
@@ -275,6 +276,7 @@ def add_user(params, batch_registration=False):
         "completed_minigames": [],
         "unlocked_walkthroughs": [],
         "tokens": 0,
+        "shell_uid": generate_shell_uid(uid)
     }
     db.users.insert_one(user)
 
@@ -678,3 +680,23 @@ def can_leave_team(uid):
     if len(api.submissions.get_submissions(uid=uid)) > 0:
         return False
     return True
+
+
+def generate_shell_uid(uid):
+    """Generate a unique Ubuntu UID for a user."""
+    UID_MIN = 1000
+    UID_MAX = 4294967295
+    # see https://people.canonical.com/~cjwatson/ubuntu-policy/policy.html/ch-opersys.html#s9.2.2
+    UID_EXCLUDE = range(30000, 65536)
+
+    is_valid_uid = False
+    thread_random = random.Random()
+    thread_random.seed(uid)
+    db = api.db.get_conn()
+    while (not is_valid_uid):
+        candidate = thread_random.randint(UID_MIN, UID_MAX)
+        is_valid_uid = (
+            candidate not in UID_EXCLUDE
+            and db.users.find_one({"shell_uid": candidate}) is None
+        )
+    return candidate
