@@ -1,13 +1,16 @@
 """Stores and retrieves runtime settings from the database."""
 
-import datetime
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 
 import api
 from api import PicoException
+from bson.codec_options import CodecOptions
 from pymongo import ReturnDocument
 from pymongo.errors import DuplicateKeyError
+
+CODEC_OPTIONS = CodecOptions(tz_aware=True)
 
 """
 Default Settings
@@ -20,8 +23,8 @@ default_settings = {
     "settings_id": 1,
     "enable_feedback": True,
     # TIME WINDOW
-    "start_time": datetime.datetime.utcnow(),
-    "end_time": datetime.datetime.utcnow(),
+    "start_time": datetime.now(timezone.utc),
+    "end_time": datetime.now(timezone.utc) + timedelta(weeks=52),
     # COMPETITION INFORMATION
     "competition_name": "CTF Placeholder",
     "competition_url": "http://192.168.2.2",
@@ -221,7 +224,9 @@ def get_settings():
     query_filter = {"settings_id": 1}
     query_projection = {"_id": False, "settings_id": False}
     try:
-        settings = db.settings.find_one_and_update(
+        settings = db.get_collection(
+            "settings", codec_options=CODEC_OPTIONS
+        ).find_one_and_update(
             filter=query_filter,
             projection=query_projection,
             upsert=True,
@@ -231,7 +236,9 @@ def get_settings():
     except DuplicateKeyError:
         # There's a chance that another thread inserts the default settings
         # between this one's search and insertion attempt.
-        settings = db.settings.find_one(query_filter, query_projection)
+        settings = db.get_collection("settings", codec_options=CODEC_OPTIONS).find_one(
+            query_filter, query_projection
+        )
     return settings
 
 
@@ -251,7 +258,9 @@ def merge_new_settings():
     db_settings = get_settings()
     merged = merge(default_settings, db_settings)
     db = api.db.get_conn()
-    db.settings.find_one_and_update({"settings_id": 1}, {"$set": merged})
+    db.get_collection("settings", codec_options=CODEC_OPTIONS).find_one_and_update(
+        {"settings_id": 1}, {"$set": merged}
+    )
 
 
 def change_settings(changes):
@@ -289,18 +298,16 @@ def change_settings(changes):
 
     check_keys(settings, changes)
     db = api.db.get_conn()
-    db.settings.find_one_and_update({"settings_id": 1}, {"$set": changes})
+    db.get_collection("settings", codec_options=CODEC_OPTIONS).find_one_and_update(
+        {"settings_id": 1}, {"$set": changes}
+    )
 
 
 def check_competition_active():
     """Check whether the competition is currently running."""
     settings = get_settings()
 
-    return (
-        settings["start_time"].timestamp()
-        < datetime.datetime.utcnow().timestamp()
-        < settings["end_time"].timestamp()
-    )
+    return settings["start_time"] < datetime.now(timezone.utc) < settings["end_time"]
 
 
 def block_before_competition(f):
@@ -314,10 +321,7 @@ def block_before_competition(f):
     def wrapper(*args, **kwargs):
         if api.user.is_logged_in() and api.user.get_user().get("admin", False):
             return f(*args, **kwargs)
-        elif (
-            datetime.datetime.utcnow().timestamp()
-            <= get_settings()["start_time"].timestamp()
-        ):
+        elif datetime.now(timezone.utc) <= get_settings()["start_time"]:
             raise PicoException("The competition has not begun yet!", 422)
         return f(*args, **kwargs)
 
@@ -335,10 +339,7 @@ def block_after_competition(f):
     def wrapper(*args, **kwargs):
         if api.user.is_logged_in() and api.user.get_user().get("admin", False):
             return f(*args, **kwargs)
-        elif (
-            datetime.datetime.utcnow().timestamp()
-            >= get_settings()["end_time"].timestamp()
-        ):
+        elif datetime.now(timezone.utc) >= get_settings()["end_time"]:
             raise PicoException("The competition has ended!", 422)
         return f(*args, **kwargs)
 
