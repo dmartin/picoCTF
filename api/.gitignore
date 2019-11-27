@@ -1,11 +1,6 @@
-# legacy ignores
+# bytecode
 *.pyc
-*.project
-results.xml
-ghostdriver.log
-.idea
-.vagrant
-*~
+
 # pytest
 coverage_report/
 .coverage
@@ -13,3 +8,7 @@ coverage_report/
 # custom flask configs
 config/*
 !config/default_settings.py
+
+# setup.py artifacts
+build/*
+dist/*
