@@ -1,0 +1,9 @@
+-r requirements.txt
+black
+flake8
+locustio
+pydocstyle
+pytest
+pytest-cov
+pytest-mongo
+pytest-redis
