@@ -1,0 +1,29 @@
+# docker-compose override exposing additional ports for direct access to each container
+# usage: $ docker-compose -f docker-compose.yml -f docker-compose.ports.yml up -d
+
+version: "3.7"
+services:
+  api:
+    ports:
+      - target: 8000
+        published: 13372
+        protocol: tcp
+        mode: host
+  mongo:
+    ports:
+      - target: 27017
+        published: 13373
+        protocol: tcp
+        mode: host
+  redis:
+    ports:
+      - target: 6379
+        published: 13374
+        protocol: tcp
+        mode: host
+  webshell-dispatch:
+    ports:
+      - target: 8080
+        published: 13375
+        protocol: tcp
+        mode: host

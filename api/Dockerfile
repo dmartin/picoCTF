@@ -2,7 +2,8 @@
 
 FROM python:3.7
 WORKDIR /app
-COPY . .
+COPY ./requirements.txt .
 RUN pip3 install -r requirements.txt
+COPY . .
 ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:8000", "-k", "eventlet", "-w", "2", "api:create_app()"]
 EXPOSE 8000
