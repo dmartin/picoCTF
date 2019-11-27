@@ -1,0 +1,49 @@
+---
+# Playbook that installs and configures picoCTF-shell servers
+
+- include: upgrade.yml
+
+- include: utils.yml
+
+- include: set_hostname.yml
+
+- name: Set password for admin user
+  user:
+    name: "{{ ansible_user }}"
+    password: "{{ shell_admin_password_crypt }}"
+  no_log: True
+
+- include: dependencies.yml
+
+- include: shell_manager.yml
+
+- include: nginx.yml
+
+- include: pam_and_services.yml
+
+- include: deploy_problems.yml
+
+- include: permissions.yml
+
+- name: Ensure nginx is running
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Hidepid
+  command: mount -o remount,hidepid=2 /proc
+
+- name: Hidepid persistence
+  command: echo "proc   /proc   proc  defaults,hidepid=2  0   0"  >> /etc/fstab
+
+- name: Remove /var/log/wtmp
+  file:
+    path: /var/log/wtmp
+    state: absent
+
+- name: Restrict /var/run/utmp
+  file:
+    path: /var/run/utmp
+    mode: go-r
+

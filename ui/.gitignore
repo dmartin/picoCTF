@@ -1,4 +1,9 @@
+# dependencies
+node_modules/
+
+# build artifacts
 _site/
 js/
-node_modules/
+
+# optional custom tls keypair
 custom_tls/

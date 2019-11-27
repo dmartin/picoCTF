@@ -1,0 +1,7 @@
+---
+- hosts: shell
+  remote_user: "{{ ansible_user }}"
+  become: yes
+  become_method: sudo
+  roles:
+    - pico-shell
