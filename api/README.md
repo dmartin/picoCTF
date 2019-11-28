@@ -1,56 +1,52 @@
-# picoCTF-web
+# pico API
 
-The picoCTF-web component consists of a competitor facing web site, the API for running a CTF, as well as management functionality for CTF organizers.
+This is the core of the pico platform: a [Flask](http://flask.palletsprojects.com)-based REST API that manages challenges, users,
+and all other aspects of CTF-style competitions. While technically standalone, it is typically
+used in conjunction with other aspects of the platform, such as the **[UI](../ui)**,
+**[webshell](../webshell)**, and **[challenges](../challenges)**. pico API containers are stateless
+and can be horizontally scaled and load-balanced.
 
-## Features
+## Configuration
 
-The picoCTF-web component provides a number of core features that are common across jeopardy style CTFs such as:
+The API requires access to [MongoDB](https://www.mongodb.com/) and [Redis](https://redis.io/) databases.
+The default connection info for these can be found along with other Flask configuration settings
+in **[`config/default_settings.py`](./config/default_settings.py)**.
 
-- Problem List
-  - Presents challenges (with optional hints)
-  - Accepts flag submissions
-  - Allows custom unlocking behavior where challenges can be "locked" and hidden until a competitor hits a certain threshold
-- Scoreboard
-  - Across a competition
-  - Within a "Classroom" or sub organization
-  - For individual progress within a challenge category
+To override these, volume a `custom_settings.py` file into the `config` directory.
 
-Additionally, the picoCTF-web component provides a number of features that are useful for running CTFs in an educational setting:
+## Local Development
 
-- Classrooms
-  - Useful to manage multiple distinct groups of competitors as in a school setting.
-- Shell server integration
-  - Integration with the [picoCTF-shell component](../picoCTF-shell) allows competitors full access to a Linux machine with the necessary tools from within a web browser
+For the purposes of local development (autocompletion, etc.), it may be useful to install
+the pip dependencies: `pip install -r requirements-dev.txt`.
 
-## Components
+While possible to run the API natively using `flask run` or a WSGI server, it is recommended
+to simply rebuild the API container within the existing docker-compose network
+(see the **[platform README](../README.md)** for more information).
 
-1. [api](./api): The picoCTF-web Flask API.
-2. [tests](./tests): Automated tests for picoCTF-web components.
-3. [daemons](./daemons): systemd services that run on the web server.
-4. [web](./web). A frontend for interacting with the Flask API.
+## Cache Daemon
 
-## Local Development <!-- markdownlint-disable MD014 -->
+The cache daemon is a script which continually caches the results of several statistical API calls.
+All deployments of the pico platform should have a single instance of the API container with
+the cache daemon script as its entrypoint, as some score/scoreboard-related API calls are
+dependent on it in order to return accurate results.
 
-You can easily bring up an instance of the picoCTF-web API in Flask's development mode, which enables live reloading, a debugger, and enables debug mode within the app. To do so:
+## Tests
 
-1. Ensure all development dependencies are installed (a virtual environment is recommended):
+*@todo: tests are outdated and/or broken*
 
-    ```shell
-    $ pip install -e .[dev]
-    ```
+Integration and load tests are located within in the `tests` directory.
+The integration tests run automatically against any opened pull requests.
 
-2. The picoCTF-web API has a dependency on a MongoDB server, and by default looks for one at `127.0.0.1:27017`. An easy way to bring one up is with Docker:
+## Code Style
 
-    ```shell
-    $ docker run -p 27017:27017 mongo
-    ```
+- In general, follow [PEP8](https://www.python.org/dev/peps/pep-0008/) conventions
+- Docstrings should adhere to [PEP 257](https://www.python.org/dev/peps/pep-0257)
+  - [pydocstyle](https://pypi.org/project/pydocstyle/) is a good tool for validating this
+- Use [isort](https://github.com/timothycrosley/isort#readme) to organize imports
+  - There is an `.isort.cfg` file provided in the repo root, so you should just have to run `isort -rv .`
+  - If using Visual Studio Code, there is a built-in "Organize Imports" command
+- Use [flake8](https://pypi.python.org/pypi/flake8) for linting
+  - The `.flake8` file in the repo root contains customized settings for this project
+- Run the [black code formatter](https://github.com/psf/black) (`black .`) before committing code
 
-3. Point Flask to the app entrypoint, and enable development mode if desired:
-
-    ```shell
-    $ export FLASK_APP=api
-    $ export FLASK_ENV=development # see warning below regarding tests
-    $ flask run
-    ```
-
-    Note that enabling development mode (setting `FLASK_ENV` to `development`) will enable live reloading and disable global exception handling, but will break the pytest tests, which expect exceptions to be handled. Consider running the tests in a different shell.
+The `requirements-dev.txt` file will automatically install `flake8`, `pydocstyle`, `isort`, and `black`.
