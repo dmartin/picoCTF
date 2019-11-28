@@ -15,7 +15,7 @@ containing an interactive Linux shell and a variety of useful command-line tools
 Dispatcher containers are stateless and may be horizontally scaled and load-balanced as needed, though established websocket connections
 must remain pinned to the originating container.
 
-Logins to the toolbox container are authenticated against the [pico API](../api),
+Logins to the toolbox container are authenticated against the **[pico API](../api)**,
 which additionally allocates a Linux UID for each user.
 
 Since each user will have a consistent UID across multiple spawned toolboxes, it is possible
