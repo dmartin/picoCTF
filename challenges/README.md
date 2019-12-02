@@ -1,7 +1,11 @@
-# picoCTF Sample Challenges
+# picoCTF challenges
 
-One goal of the picoCTF platform is to standardize the creation and deployment of CTF challenges so that they can serve as an educational tool.  This is largely facilitated through the [shell_manager](../picoCTF-shell/shell_manager) utility and the [hacksport](../picoCTF-shell/hacksport) library.
+### *This part is a work in progress*
 
-This [directory](./sample-challenges) contains example problems that demonstrate how to use the picoCTF platform functionality. These are the challenges that are loaded by default into the development environment when you run `vagrant up`.
+This directory contains sample challenges and information on how to write new custom challenges.
 
-`sample-weightmap.json` provides an example of a weightmap (formerly *bundle*) file specifying challenge unlock order.
+## Challenge Server
+
+This is a temporary measure as work to convert challenges to a container-based infrastructure
+is ongoing. It uses a stripped-down version of the former Vagrant-based shell server.
+To load sample challenges into a running instance of the platform, run `load_samples.sh`.
