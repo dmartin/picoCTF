@@ -1,4 +1,6 @@
-# picoCTF Platform Documentation
+# pico platform documentation
+
+### *This documentation refers to the 2019 version of the platform and is currently outdated (@todo)*
 
 * [Setup](./setup.md)
 * [Adding Your Own Content](./adding-your-own-content.md)
