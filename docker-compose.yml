@@ -76,8 +76,12 @@ services:
       - api
 networks:
   frontend:
+    name: pico_frontend
   backend:
+    name: pico_backend
   webshell-auth:
+    name: pico_webshell-auth
 volumes:
   webshell-homes:
+    name: pico_webshell-homes
     external: false

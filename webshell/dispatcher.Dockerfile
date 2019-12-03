@@ -29,5 +29,5 @@ RUN mkdir /opt/ttyd && \
 # - the LINUX_IMMUTABLE capability is required for the append-only attributes set in pam_auth.py
 # - as toolbox containers are spawned outside the control of an orchestrator, the home directory volume and
 #   network (for pico API authentication) must be specified here
-ENTRYPOINT ["/opt/ttyd/ttyd", "-p", "8080", "-O", "docker", "run", "-it", "-v=webshell-homes:/home", "--init", "--rm", "--cap-add=LINUX_IMMUTABLE", "--network=picoctf_webshell-auth", "picoctf/toolbox"]
+ENTRYPOINT ["/opt/ttyd/ttyd", "-p", "8080", "-O", "docker", "run", "-it", "-v=pico_webshell-homes:/home", "--init", "--rm", "--cap-add=LINUX_IMMUTABLE", "--network=pico_webshell-auth", "picoctf/toolbox"]
 EXPOSE 8080
